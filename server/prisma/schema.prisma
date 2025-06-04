@@ -1,0 +1,46 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql" // or "mysql" or "sqlite"
+  url      = env("DB_URI")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Blog {
+  id            Int        @id @default(autoincrement())
+  title         String
+  subtitle      String?
+  slug          String     @unique
+  content       String     @db.Text
+  status        BlogStatus @default(DRAFT)
+  featuredImage String?
+  authorName    String
+  tags          Tag[]      @relation("BlogToTag")
+  viewCount     Int        @default(0)
+  publishedAt   DateTime?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+}
+
+model Tag {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  slug      String   @unique
+  blogs     Blog[]   @relation("BlogToTag")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum BlogStatus {
+  DRAFT
+  PUBLISHED
+}

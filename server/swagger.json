@@ -1,0 +1,139 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Blog Posting API",
+    "version": "1.0.0",
+    "description": "API documentation for your Blog Posting System."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000/api/v1/",
+      "description": "Local server"
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Check health and database connection",
+        "tags": ["Health"],
+        "responses": {
+          "200": {
+            "description": "Health check passed, database connected.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "ok" },
+                    "database": { "type": "string", "example": "connected" }
+                  }
+                },
+                "examples": {
+                  "Healthy": {
+                    "summary": "Healthy response",
+                    "value": {
+                      "status": "ok",
+                      "database": "connected"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Health check failed, database disconnected.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "error" },
+                    "database": { "type": "string", "example": "disconnected" },
+                    "message": {
+                      "type": "string",
+                      "example": "Health check failed"
+                    }
+                  }
+                },
+                "examples": {
+                  "Unhealthy": {
+                    "summary": "Database connection failed",
+                    "value": {
+                      "status": "error",
+                      "database": "disconnected",
+                      "message": "Health check failed"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/blog": {
+      "get": {
+        "summary": "Get all blog posts",
+        "tags": ["Blog"],
+        "responses": {
+          "200": {
+            "description": "A list of blog posts.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Blog"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "blog/{id}": {
+      "get": {
+        "summary": "Get a single blog post by ID",
+        "tags": ["Blog"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A single blog post.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Blog"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Blog post not found."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Blog": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "title": { "type": "string" },
+          "content": { "type": "string" },
+          "author": { "type": "string" },
+          "createdAt": { "type": "string", "format": "date-time" }
+        }
+      }
+    }
+  }
+}
