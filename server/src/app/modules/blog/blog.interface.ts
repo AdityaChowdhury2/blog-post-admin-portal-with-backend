@@ -1,11 +1,11 @@
-type TBlogStatus = "DRAFT" | "PUBLISHED";
+import type { BlogStatus } from "@prisma/client";
 
 export interface ICreateBlog {
-    title: string;
-    subtitle?: string;
-    content: string;
-    status: TBlogStatus;
-    authorName: string;
-    tags?: string;
-    file?: Express.Multer.File;
+  title: string;
+  subtitle?: string;
+  content: string;
+  status: BlogStatus;
+  authorName: string;
+  tags?: string;
+  file?: Express.Multer.File;
 }

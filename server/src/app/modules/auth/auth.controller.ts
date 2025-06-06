@@ -5,34 +5,50 @@ import httpStatus from "http-status";
 import { catchAsync } from "../../utils/catchAsync";
 import { AuthService } from "./auth.service";
 import sendResponse from "../../utils/sendResponse";
+import { IAuthLoginPayload, IAuthRegisterPayload } from "./auth.interface";
 
 const login: RequestHandler = catchAsync(
-    async (req: Request, res: Response) => {
-        const { email, password } = req.body;
-        const result = await AuthService.loginService(email, password);
+  async (req: Request, res: Response) => {
+    const loginPayload = req.body as IAuthLoginPayload;
+    const result = await AuthService.loginService(loginPayload);
 
-        sendResponse(res, {
-            statusCode: httpStatus.OK,
-            success: true,
-            message: "Login successful",
-            data: result,
-        });
-    }
+    res.cookie("refreshToken", result.refreshToken, {
+      httpOnly: true,
+      sameSite: "strict",
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+    });
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Login successful",
+      data: {
+        accessToken: result.accessToken,
+        user: {
+          email: result.email,
+          role: result.role,
+          id: result.id,
+          name: result.name,
+        },
+      },
+    });
+  }
 );
 
 const register: RequestHandler = catchAsync(async (req, res) => {
-    const { email, password } = req.body;
-    const result = await AuthService.registerService(email, password);
+  const registerPayload = req.body as IAuthRegisterPayload;
+  const result = await AuthService.registerService(registerPayload);
 
-    sendResponse(res, {
-        statusCode: httpStatus.CREATED,
-        success: true,
-        message: "User registered successfully",
-        data: result,
-    });
+  sendResponse(res, {
+    statusCode: httpStatus.CREATED,
+    success: true,
+    message: "User registered successfully",
+    data: result,
+  });
 });
 
 export const AuthController = {
-    login,
-    register,
+  login,
+  register,
 };

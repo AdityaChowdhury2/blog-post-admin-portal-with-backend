@@ -1,7 +1,19 @@
+import type { UserRole } from "@prisma/client";
+
+export interface IAuthLoginPayload {
+  email: string;
+  password: string;
+}
+
+export interface IAuthRegisterPayload {
+  email: string;
+  password: string;
+  name: string;
+  role: UserRole;
+}
 export interface IAuthService {
-    loginService: (email: string, password: string) => Promise<{ token: string }>;
-    registerService: (
-        email: string,
-        password: string
-    ) => Promise<{ id: string; email: string }>;
+  loginService: (payload: IAuthLoginPayload) => Promise<{ token: string }>;
+  registerService: (
+    payload: IAuthRegisterPayload
+  ) => Promise<{ id: string; email: string; role: UserRole }>;
 }

@@ -4,7 +4,7 @@ import type {
   BlogResponse,
   CreateBlogRequest,
   UpdateBlogRequest,
-} from "../../constants/blog";
+} from "../../interface/blog";
 
 export const blogApiSlice = baseApi.injectEndpoints({
   endpoints: (builder) => ({

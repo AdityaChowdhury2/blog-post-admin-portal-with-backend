@@ -1,5 +1,5 @@
 import { baseApi } from "./apiSlice";
-import { setToken, logout } from "../features/authSlice";
+import { logout, loginSuccess } from "../features/authSlice";
 import { AxiosError } from "axios";
 
 const authApiSlice = baseApi.injectEndpoints({
@@ -9,24 +9,32 @@ const authApiSlice = baseApi.injectEndpoints({
         url: "/auth/login",
         method: "POST",
         data: credentials,
-        useAuth: false, // Optional: if axiosBaseQuery supports this
+        useAuth: false, // Optional: normally it's false for public routes
       }),
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
+          // console.log("queryFulfilled", queryFulfilled);
           const { data } = await queryFulfilled;
-          const token = data?.data?.token;
-
-          if (token) {
-            dispatch(setToken(token));
+          // console.log("data in authApiSlice", data);
+          if (data.success) {
+            dispatch(loginSuccess(data.data));
           }
         } catch (error: unknown) {
+          console.log("error", error);
           if (error instanceof AxiosError && error.response?.status === 401) {
             dispatch(logout());
           }
         }
       },
     }),
+    register: builder.mutation({
+      query: (credentials) => ({
+        url: "/auth/register",
+        method: "POST",
+        data: credentials,
+      }),
+    }),
   }),
 });
 
-export const { useLoginMutation } = authApiSlice;
+export const { useLoginMutation, useRegisterMutation } = authApiSlice;

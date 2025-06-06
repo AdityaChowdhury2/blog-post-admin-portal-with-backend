@@ -236,9 +236,9 @@
     "@types/express" "*"
 
 "@types/node@*", "@types/node@^22.15.19":
-  version "22.15.29"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-22.15.29.tgz#c75999124a8224a3f79dd8b6ccfb37d74098f678"
-  integrity sha512-LNdjOkUDlU1RZb8e1kOIUpN1qQUlzGkEtbVNo53vbrwDg5om6oduhm4SiUaPW5ASTXhAiP0jInWG8Qx9fVlOeQ==
+  version "22.15.30"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-22.15.30.tgz#3a20431783e28dd0b0326f84ab386a2ec81d921d"
+  integrity sha512-6Q7lr06bEHdlfplU6YRbgG1SFBdlsfNC4/lX+SkhiTs0cpJkOElmWls8PxDFv4yY/xKb8Y6SO0OmSX4wgqTZbA==
   dependencies:
     undici-types "~6.21.0"
 
@@ -1738,9 +1738,9 @@ swagger-typescript-api@^13.2.0:
     typescript "~5.8.3"
 
 swagger-ui-dist@>=5.0.0:
-  version "5.22.0"
-  resolved "https://registry.yarnpkg.com/swagger-ui-dist/-/swagger-ui-dist-5.22.0.tgz#8280cfa9659d90cf6f682c76f7e792b0da939946"
-  integrity sha512-8YlCSxiyb8uPFa7qoB1lRHYr1PBbT1NuV9RvQdFFPFPudRBTPf9coU5jl02KhzvrtmTEw4jXRgb0kg8pJvVuWQ==
+  version "5.24.0"
+  resolved "https://registry.yarnpkg.com/swagger-ui-dist/-/swagger-ui-dist-5.24.0.tgz#5c68287dac5c249a704fa27926677e6a2d1ce2a2"
+  integrity sha512-okwN8vf14TOgBTUyGgCXEAoHnrwwp/042dC00B3kPu2OAe9zD75BtSbLlgAK1Y5e3csJhs+AdnIxJYZN9uvptg==
   dependencies:
     "@scarf/scarf" "=1.4.0"
 
@@ -1979,6 +1979,6 @@ z-schema@^5.0.1:
     commander "^10.0.0"
 
 zod@^3.24.4:
-  version "3.25.51"
-  resolved "https://registry.yarnpkg.com/zod/-/zod-3.25.51.tgz#aa2cf648e54f6f060f139cf77b694819f63c9f3a"
-  integrity sha512-TQSnBldh+XSGL+opiSIq0575wvDPqu09AqWe1F7JhUMKY+M91/aGlK4MhpVNO7MgYfHcVCB1ffwAUTJzllKJqg==
+  version "3.25.53"
+  resolved "https://registry.yarnpkg.com/zod/-/zod-3.25.53.tgz#d2f158841eab8ec50f36c31065e5ab6c1634f6d5"
+  integrity sha512-BKOKoY3XcGUVkqaalCtFK15LhwR0G0i65AClFpWSXLN2gJNBGlTktukHgwexCTa/dAacPPp9ReryXPWyeZF4LQ==

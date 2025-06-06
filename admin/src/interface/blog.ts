@@ -1,3 +1,7 @@
+import { BlogStatus } from "../constants/blog.constant";
+
+export type BlogStatus = (typeof BlogStatus)[number];
+
 // Define our blog types
 export interface Blog {
   id: string;
@@ -31,7 +35,7 @@ export interface CreateBlogRequest {
   subTitle: string;
   tags: string;
   featuredImage: File;
-  status: "DRAFT" | "PUBLISHED";
+  status: BlogStatus;
 }
 
 export interface UpdateBlogRequest extends CreateBlogRequest {

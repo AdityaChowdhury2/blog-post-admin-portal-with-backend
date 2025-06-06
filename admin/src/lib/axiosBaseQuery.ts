@@ -18,9 +18,6 @@ export const axiosBaseQuery =
     console.log(
       `📡 AxiosBaseQuery Called → ${method} ${url} (useAuth: ${useAuth})`
     );
-    console.log("data", data);
-    console.log("params", params);
-    // console.log("body", body);
 
     const client = useAuth ? axiosInstance : axiosPublic;
 

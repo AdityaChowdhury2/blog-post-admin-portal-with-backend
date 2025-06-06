@@ -1,14 +1,23 @@
 import { useState, lazy, Suspense, useEffect } from "react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
 import { Label } from "../components/ui/label";
-import { Loader2 } from "lucide-react";
+import { LuLoader } from "react-icons/lu";
 import { FileUpload } from "../components/ui/file-upload";
 import { useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
 import { useForm, Controller } from "react-hook-form";
-import { useGetBlogQuery, useCreateBlogMutation, useUpdateBlogMutation } from "../redux/api/blogApiSlice";
+import {
+  useGetBlogQuery,
+  useCreateBlogMutation,
+  useUpdateBlogMutation,
+} from "../redux/api/blogApiSlice";
 
 // Import your custom components as needed
 // import  Button, Label, Input, Card, CardHeader, CardTitle, CardContent, Textarea, Select, SelectTrigger, SelectValue, SelectContent, SelectItem
@@ -42,9 +51,12 @@ const BlogPostEditor = () => {
   // RTK Query hooks
   const [createBlogPost] = useCreateBlogMutation();
   const [updateBlogPost] = useUpdateBlogMutation();
-  const { data: existingPost, isLoading: isLoadingPost } = useGetBlogQuery(id || '', {
-    skip: !isEdit,
-  });
+  const { data: existingPost, isLoading: isLoadingPost } = useGetBlogQuery(
+    id || "",
+    {
+      skip: !isEdit,
+    }
+  );
 
   // React Hook Form setup
   const {
@@ -53,7 +65,7 @@ const BlogPostEditor = () => {
     handleSubmit,
     setValue,
     formState: { errors },
-    reset
+    reset,
   } = useForm<BlogFormData>({
     defaultValues: {
       title: "",
@@ -61,8 +73,8 @@ const BlogPostEditor = () => {
       content: "",
       author: "",
       tags: "",
-      featuredImage: undefined
-    }
+      featuredImage: undefined,
+    },
   });
 
   // If we're editing, fetch the post data
@@ -82,7 +94,7 @@ const BlogPostEditor = () => {
   // Handle image upload preview
   const handleImageUpload = (file: File | null) => {
     if (file) {
-      setValue('featuredImage', file);
+      setValue("featuredImage", file);
     }
   };
 
@@ -98,7 +110,10 @@ const BlogPostEditor = () => {
   };
 
   // Form submission handlers
-  const onSubmit = async (data: BlogFormData, status: 'DRAFT' | 'PUBLISHED') => {
+  const onSubmit = async (
+    data: BlogFormData,
+    status: "DRAFT" | "PUBLISHED"
+  ) => {
     setIsSubmitting(true);
 
     console.log("data", data);
@@ -111,7 +126,7 @@ const BlogPostEditor = () => {
         subTitle: data.subTitle,
         tags: data.tags,
         status,
-        featuredImage: data.featuredImage
+        featuredImage: data.featuredImage,
       };
 
       console.log("blogData", blogData);
@@ -126,7 +141,7 @@ const BlogPostEditor = () => {
           tags: data.tags,
           featuredImage: data.featuredImage,
           authorName: data.author,
-          status: status
+          status: status,
         }).unwrap();
         toast.success("Blog post updated successfully!");
       } else {
@@ -138,7 +153,7 @@ const BlogPostEditor = () => {
           tags: data.tags,
           featuredImage: data.featuredImage,
           authorName: data.author,
-          status: status
+          status: status,
         }).unwrap();
         toast.success("Blog post created successfully!");
       }
@@ -154,7 +169,7 @@ const BlogPostEditor = () => {
   };
 
   const handleSaveAsDraft = () => {
-    handleSubmit((data) => onSubmit(data, 'DRAFT'))();
+    handleSubmit((data) => onSubmit(data, "DRAFT"))();
   };
 
   const handlePublish = () => {
@@ -164,7 +179,7 @@ const BlogPostEditor = () => {
   if (isLoadingPost) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="animate-spin" />
+        <LuLoader className="animate-spin" />
       </div>
     );
   }
@@ -184,7 +199,11 @@ const BlogPostEditor = () => {
             </p>
           </div>
           <div className="flex space-x-2">
-            <Button className="bg-blue-100" variant="outline" onClick={handlePreview}>
+            <Button
+              className="bg-blue-100"
+              variant="outline"
+              onClick={handlePreview}
+            >
               Preview
             </Button>
             <Button
@@ -241,7 +260,7 @@ const BlogPostEditor = () => {
               <Suspense
                 fallback={
                   <div className="min-h-[400px] font-mono flex items-center justify-center">
-                    <Loader2 className="animate-spin" />
+                    <LuLoader className="animate-spin" />
                   </div>
                 }
               >
@@ -337,7 +356,6 @@ const BlogPostEditor = () => {
                     Separate tags with commas
                   </p>
                 </div>
-
 
                 <div className="space-y-2">
                   <Label htmlFor="featuredImage">Featured Image</Label>
