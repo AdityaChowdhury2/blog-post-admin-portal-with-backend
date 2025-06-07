@@ -72,8 +72,20 @@ const logout: RequestHandler = catchAsync(async (req, res) => {
   });
 });
 
+const refreshToken: RequestHandler = catchAsync(async (req, res) => {
+  const refreshToken = req?.cookies?.refreshToken;
+  const result = await AuthService.refreshTokenService(refreshToken);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Refresh token successful",
+    data: result,
+  });
+});
+
 export const AuthController = {
   login,
   register,
   logout,
+  refreshToken,
 };

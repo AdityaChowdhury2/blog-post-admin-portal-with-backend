@@ -4,9 +4,10 @@ export type BlogStatus = (typeof BlogStatus)[number];
 
 // Define our blog types
 export interface Blog {
-  id: string;
+  id?: string;
   title: string;
   content: string;
+  slug: string;
   authorName: string;
   subTitle: string;
   tags: string;
@@ -16,7 +17,7 @@ export interface Blog {
   status: string;
 }
 
-export interface BlogResponse {
+export interface GetAllBlogsResponse {
   success: boolean;
   message?: string;
   data?: {
@@ -25,6 +26,12 @@ export interface BlogResponse {
     page: number;
     limit: number;
   };
+}
+
+export interface GetSingleBlogResponse {
+  success: boolean;
+  message?: string;
+  data?: Blog;
 }
 
 // Define request types
@@ -36,6 +43,7 @@ export interface CreateBlogRequest {
   tags: string;
   featuredImage: File;
   status: BlogStatus;
+  slug: string;
 }
 
 export interface UpdateBlogRequest extends CreateBlogRequest {

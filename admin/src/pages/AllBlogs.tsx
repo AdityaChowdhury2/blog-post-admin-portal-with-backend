@@ -138,14 +138,14 @@ const BlogsPage: React.FC = () => {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem asChild>
-                          <Link to={`/edit-blog/${blog.id}`}>
+                          <Link to={`/edit-blog/${blog?.slug}`}>
                             <LuPencil className="mr-2 h-4 w-4" />
                             Edit
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           className="text-red-600"
-                          onClick={() => setDeletePostId(blog.id)}
+                          onClick={() => setDeletePostId(blog?.slug || "")}
                         >
                           <LuTrash2 className="mr-2 h-4 w-4" />
                           Delete

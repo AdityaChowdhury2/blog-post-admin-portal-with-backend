@@ -1,6 +1,7 @@
 import { baseApi } from "./apiSlice";
-import { logout, loginSuccess } from "../features/authSlice";
 import { AxiosError } from "axios";
+import { loginSuccess, logout } from "../features/authSlice";
+import { setLocalStorage } from "../../lib/localStorage";
 
 const authApiSlice = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -17,7 +18,9 @@ const authApiSlice = baseApi.injectEndpoints({
           const { data } = await queryFulfilled;
           // console.log("data in authApiSlice", data);
           if (data.success) {
-            dispatch(loginSuccess(data.data));
+            setLocalStorage("token", data.data.accessToken);
+            setLocalStorage("user", data.data.user);
+            dispatch(loginSuccess(data.data.user));
           }
         } catch (error: unknown) {
           console.log("error", error);

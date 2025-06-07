@@ -33,7 +33,7 @@ export const router = createBrowserRouter([
             element: <BlogPostEditor />,
           },
           {
-            path: "/edit-blog/:id",
+            path: "/edit-blog/:slug",
             element: <BlogPostEditor />,
           },
           {

@@ -1,10 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { UserRole } from "../../constants/user.constant";
-import {
-  getLocalStorage,
-  removeLocalStorage,
-  setLocalStorage,
-} from "../../lib/localStorage";
+import { getLocalStorage, removeLocalStorage } from "../../lib/localStorage";
 
 export interface User {
   id: string;
@@ -56,13 +52,9 @@ const authSlice = createSlice({
     loginSuccess: (state, action) => {
       state.isLoading = false;
       state.isAuthenticated = true;
-      state.user = action.payload.user;
+      state.user = action.payload;
       state.error = null;
-      if (action.payload?.accessToken) {
-        state.token = action.payload.accessToken;
-        setLocalStorage("token", action.payload.accessToken);
-        setLocalStorage("user", action.payload.user);
-      }
+      state.token = getLocalStorage("token");
     },
     loginFailure: (state, action) => {
       state.isLoading = false;

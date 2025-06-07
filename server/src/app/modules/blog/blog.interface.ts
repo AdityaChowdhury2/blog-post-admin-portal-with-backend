@@ -7,5 +7,7 @@ export interface ICreateBlog {
   status: BlogStatus;
   authorName: string;
   tags?: string;
+  slug: string;
+  featuredImage: string;
   file?: Express.Multer.File;
 }

@@ -8,18 +8,6 @@ const createBlogSchema = z.object({
     content: z.string().min(1, "Content is required"),
     status: z.enum(Object.values(BlogStatus) as [string, ...string[]]),
     authorName: z.string().min(1, "Author name is required"),
-    featuredImage: z
-      .any()
-      .refine(
-        (file) =>
-          file &&
-          typeof file === "object" &&
-          "mimetype" in file &&
-          "buffer" in file,
-        {
-          message: "featuredImage must be an instance of Express.Multer.File",
-        }
-      ),
     tags: z.string().optional(),
   }),
 });

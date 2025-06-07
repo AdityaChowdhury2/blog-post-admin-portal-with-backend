@@ -1,31 +1,32 @@
 // redux/api/blogApiSlice.ts
 import { baseApi } from "./apiSlice";
 import type {
-  BlogResponse,
   CreateBlogRequest,
+  GetAllBlogsResponse,
+  GetSingleBlogResponse,
   UpdateBlogRequest,
 } from "../../interface/blog";
 
 export const blogApiSlice = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // PUBLIC
-    getBlogs: builder.query<BlogResponse, void>({
+    getBlogs: builder.query<GetAllBlogsResponse, void>({
       query: () => ({
-        url: "/blogs",
+        url: "/blog",
         method: "GET",
         useAuth: false, // 👈 public access
       }),
     }),
-    getBlog: builder.query<BlogResponse, string>({
-      query: (id) => ({
-        url: `/blogs/${id}`,
+    getBlog: builder.query<GetSingleBlogResponse, string>({
+      query: (slug) => ({
+        url: `/blog/${slug}`,
         method: "GET",
         useAuth: false, // 👈 public access
       }),
     }),
 
     // AUTHENTICATED
-    createBlog: builder.mutation<BlogResponse, CreateBlogRequest>({
+    createBlog: builder.mutation<GetSingleBlogResponse, CreateBlogRequest>({
       query: (blog) => {
         console.log("=== Create Blog Mutation ===");
         console.log("Raw blog data:", blog);
@@ -70,20 +71,20 @@ export const blogApiSlice = baseApi.injectEndpoints({
         }
 
         return {
-          url: "/blogs",
+          url: "/blog",
           method: "POST",
           data: formData,
-          headers: {
-            "Content-Type": "multipart/form-data",
-            // Don't set Content-Type, let the browser set it with the boundary
-            Accept: "application/json",
-          },
+          // headers: {
+          // "Content-Type": "multipart/form-data",
+          // Don't set Content-Type, let the browser set it with the boundary
+          // Accept: "application/json",
+          // },
           useAuth: true, // 🔐 needs auth
         };
       },
     }),
-    updateBlog: builder.mutation<BlogResponse, UpdateBlogRequest>({
-      query: ({ id, ...blog }) => {
+    updateBlog: builder.mutation<GetSingleBlogResponse, UpdateBlogRequest>({
+      query: ({ slug, ...blog }) => {
         console.log("=== Update Blog Mutation ===");
         console.log("Raw blog data:", blog);
         console.log(
@@ -127,7 +128,7 @@ export const blogApiSlice = baseApi.injectEndpoints({
         }
 
         return {
-          url: `/blogs/${id}`,
+          url: `/blog/${slug}`,
           method: "PUT",
           data: formData,
           headers: {
@@ -138,9 +139,9 @@ export const blogApiSlice = baseApi.injectEndpoints({
         };
       },
     }),
-    deleteBlog: builder.mutation<BlogResponse, string>({
-      query: (id) => ({
-        url: `/blogs/${id}`,
+    deleteBlog: builder.mutation<GetSingleBlogResponse, string>({
+      query: (slug) => ({
+        url: `/blog/${slug}`,
         method: "DELETE",
         useAuth: true, // 🔐 needs auth
       }),

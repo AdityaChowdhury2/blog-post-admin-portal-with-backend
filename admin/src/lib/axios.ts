@@ -1,55 +1,40 @@
-import axios, {
-  AxiosError,
-  type AxiosResponse,
-  type InternalAxiosRequestConfig,
-} from "axios";
-import { removeLocalStorage } from "./localStorage";
+import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
+import { getLocalStorage } from "./localStorage";
 
-// Create public axios instance
+// Set your server URL, fallback to localhost
+const BASE_URL =
+  import.meta.env.VITE_SERVER_URL || "http://localhost:8000/api/v1";
+
+// --- Public axios instance ---
 export const axiosPublic = axios.create({
-  baseURL: import.meta.env.VITE_SERVER_URL || "http://localhost:8000/api/v1",
+  baseURL: BASE_URL,
   withCredentials: true,
 });
 
-// Create authenticated axios instance
+// --- Authenticated axios instance ---
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_SERVER_URL || "http://localhost:8000/api/v1",
+  baseURL: BASE_URL,
   withCredentials: true,
 });
 
-// Request interceptor for authenticated instance
+// --- Request interceptor for authenticated instance ---
 axiosInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const token = localStorage.getItem("token");
+    // Ensure headers object exists
+    config.headers = config.headers || {};
+    const token = getLocalStorage("token");
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      config.headers["Authorization"] = `Bearer ${token}`;
     }
     return config;
   },
-  (error: AxiosError) => {
-    return Promise.reject(error);
-  }
+  (error: AxiosError) => Promise.reject(error)
 );
 
-// Response interceptor for authenticated instance
-axiosInstance.interceptors.response.use(
-  (response: AxiosResponse) => response,
-  (error: AxiosError) => {
-    if (error.response?.status === 401) {
-      // Optional: clear localStorage
-      removeLocalStorage("token");
-      removeLocalStorage("user");
+// --- Optional: React hook for authenticated axios instance ---
+export const useAxiosInstance = () => axiosInstance;
 
-      // Optional: notify app (e.g., redirect, reload)
-      console.warn("Unauthorized, please log in again.");
-    }
-    return Promise.reject(error);
-  }
-);
-
-// Custom hook for public axios instance
-export const useAxiosPublic = () => {
-  return axiosPublic;
-};
+// --- Optional: React hook for public axios instance ---
+export const useAxiosPublic = () => axiosPublic;
 
 export default axiosInstance;

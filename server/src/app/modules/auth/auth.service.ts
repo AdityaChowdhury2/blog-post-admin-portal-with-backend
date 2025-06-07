@@ -83,8 +83,53 @@ const logout = async (refreshToken: string) => {
   });
 };
 
+const refreshToken = async (refreshToken: string) => {
+  try {
+    const token = await prisma.refreshToken.findUnique({
+      where: { token: refreshToken },
+    });
+    if (!token) {
+      throw new AppError(httpStatus.UNAUTHORIZED, "Invalid refresh token");
+    }
+
+    const decoded = JwtUtils.verifyRefreshToken(refreshToken) as {
+      userId: string;
+      email: string;
+      iat: number;
+      exp: number;
+    };
+
+    const user = await prisma.user.findUnique({
+      where: { id: Number(decoded.userId) },
+    });
+    if (!user) {
+      throw new AppError(httpStatus.UNAUTHORIZED, "User not found");
+    }
+
+    const accessToken = JwtUtils.generateAccessToken({
+      userId: user.id.toString(),
+      email: user.email,
+    });
+
+    return {
+      accessToken,
+      data: {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        name: user.name,
+      },
+    };
+  } catch (error) {
+    throw new AppError(
+      httpStatus.UNAUTHORIZED,
+      "Session expired, please login again"
+    );
+  }
+};
 export const AuthService = {
   loginService: login,
   registerService: register,
   logoutService: logout,
+  refreshTokenService: refreshToken,
 };

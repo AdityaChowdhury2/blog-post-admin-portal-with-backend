@@ -19,6 +19,7 @@ import {
   useUpdateBlogMutation,
 } from "../redux/api/blogApiSlice";
 import { Helmet } from "react-helmet-async";
+import slugify from "slugify";
 
 // Import your custom components as needed
 // import  Button, Label, Input, Card, CardHeader, CardTitle, CardContent, Textarea, Select, SelectTrigger, SelectValue, SelectContent, SelectItem
@@ -34,6 +35,15 @@ interface BlogFormData {
   tags: string;
   featuredImage: File;
 }
+interface Response<T> {
+  success: boolean;
+  message: string;
+  data: T;
+  errorSources?: {
+    [key: string]: string;
+  };
+  stack?: string;
+}
 
 // Mock category data
 // const categories = [
@@ -46,14 +56,14 @@ interface BlogFormData {
 const BlogPostEditor = () => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { id } = useParams();
-  const isEdit = !!id;
+  const { slug } = useParams();
+  const isEdit = !!slug;
 
   // RTK Query hooks
   const [createBlogPost] = useCreateBlogMutation();
   const [updateBlogPost] = useUpdateBlogMutation();
   const { data: existingPost, isLoading: isLoadingPost } = useGetBlogQuery(
-    id || "",
+    slug || "",
     {
       skip: !isEdit,
     }
@@ -118,7 +128,7 @@ const BlogPostEditor = () => {
     setIsSubmitting(true);
 
     console.log("data", data);
-
+    const slug = slugify(data.title, { lower: true, strict: true });
     try {
       const blogData = {
         title: data.title,
@@ -127,20 +137,22 @@ const BlogPostEditor = () => {
         subTitle: data.subTitle,
         tags: data.tags,
         status,
+        slug,
         featuredImage: data.featuredImage,
       };
 
       console.log("blogData", blogData);
 
-      if (isEdit && id) {
+      if (isEdit && slug && existingPost?.data?.id) {
         // Update existing post
         await updateBlogPost({
-          id,
+          id: existingPost.data.id,
           title: data.title,
           content: data.content,
           subTitle: data.subTitle,
           tags: data.tags,
           featuredImage: data.featuredImage,
+          slug,
           authorName: data.author,
           status: status,
         }).unwrap();
@@ -153,6 +165,7 @@ const BlogPostEditor = () => {
           subTitle: data.subTitle,
           tags: data.tags,
           featuredImage: data.featuredImage,
+          slug,
           authorName: data.author,
           status: status,
         }).unwrap();
@@ -161,9 +174,14 @@ const BlogPostEditor = () => {
 
       // Navigate back to posts list
       navigate("/blogs");
-    } catch (error) {
+    } catch (error: unknown | { status?: number; data?: Response<unknown> }) {
       console.error("Error saving blog post:", error);
-      toast.error("Failed to save blog post. Please try again.");
+      toast.error(
+        (error as { status?: number; data?: Response<unknown> }).data?.message
+          ? (error as { status?: number; data?: Response<unknown> }).data
+              ?.message
+          : "Failed to save blog post. Please try again."
+      );
     } finally {
       setIsSubmitting(false);
     }

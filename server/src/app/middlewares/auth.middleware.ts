@@ -14,11 +14,14 @@ export const authenticateJWT = (
     throw new AppError(httpStatus.UNAUTHORIZED, "No token provided");
 
   const token = authHeader.split(" ")[1];
+  console.log("token ====>", token);
   try {
     const decoded = jwt.verify(token, config.jwt_access_secret);
     (req as any).user = decoded;
+    console.log("decoded ====>", decoded);
     next();
   } catch (err) {
+    console.log("err ====>", err);
     throw new AppError(httpStatus.UNAUTHORIZED, "Invalid token");
   }
 };

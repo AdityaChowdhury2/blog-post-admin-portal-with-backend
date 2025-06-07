@@ -12,8 +12,10 @@ interface AxiosBaseQueryArgs {
   useAuth?: boolean; // 🔑 flag to choose axios instance
 }
 
+type AxiosBaseQueryError = { status?: number; data?: unknown };
+
 export const axiosBaseQuery =
-  (): BaseQueryFn<AxiosBaseQueryArgs, unknown, unknown> =>
+  (): BaseQueryFn<AxiosBaseQueryArgs, unknown, AxiosBaseQueryError> =>
   async ({ url, method, data, params, useAuth = false }) => {
     console.log(
       `📡 AxiosBaseQuery Called → ${method} ${url} (useAuth: ${useAuth})`
@@ -26,6 +28,7 @@ export const axiosBaseQuery =
       return { data: result.data };
     } catch (axiosError) {
       const err = axiosError as AxiosError;
+      console.log("err", err);
       return {
         error: {
           status: err.response?.status,

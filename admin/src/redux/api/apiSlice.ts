@@ -1,9 +1,9 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 
-import { axiosBaseQuery } from "../../lib/axiosBaseQuery";
+import { axiosBaseQueryWithReauth } from "../../lib/axiosBaseQueryWithReauth";
 
 export const baseApi = createApi({
   reducerPath: "api",
-  baseQuery: axiosBaseQuery(),
+  baseQuery: axiosBaseQueryWithReauth(),
   endpoints: () => ({}),
 });
