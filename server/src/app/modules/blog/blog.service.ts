@@ -7,7 +7,7 @@ import { ICreateBlog } from "./blog.interface";
 const createBlogService = async (payload: ICreateBlog) => {
   const {
     title,
-    subtitle,
+    subTitle,
     content,
     status,
     authorName,
@@ -16,16 +16,22 @@ const createBlogService = async (payload: ICreateBlog) => {
     featuredImage,
   } = payload;
 
-  let tagsArray: string[] = [];
+  let tagsArray: (string | null)[] = [];
   if (tags) {
-    tagsArray = tags.split(",").map((tag) => tag.trim());
+    tagsArray = tags.split(",").map((tag: string) => {
+      if (tag.trim() === "") return null;
+      return tag.trim();
+    });
   }
+
+  console.log("tagsArray ====>", tagsArray);
 
   // Wrap in transaction
   const post = await prisma.$transaction(async (tx: any) => {
     // Upsert tags inside the same transaction
     const tagObjs = await Promise.all(
-      tagsArray.map(async (tagName: string) => {
+      tagsArray.map(async (tagName: string | null) => {
+        if (!tagName) return null;
         const tagSlug = slugify(tagName, { lower: true, strict: true });
         return tx.tag.upsert({
           where: { slug: tagSlug },
@@ -39,7 +45,7 @@ const createBlogService = async (payload: ICreateBlog) => {
     const createdPost = await tx.blog.create({
       data: {
         title,
-        subtitle,
+        subTitle,
         content,
         status,
         slug,
@@ -117,8 +123,28 @@ const getBlogService = async (blogSlug: string, ip: string) => {
   return blog;
 };
 
+const updateBlogService = async (blogSlug: string, payload: ICreateBlog) => {
+  const { title, subTitle, content, status, authorName, featuredImage } =
+    payload;
+
+  const blog = await prisma.blog.update({
+    where: { slug: blogSlug },
+    data: {
+      title,
+      subTitle,
+      content,
+      status,
+      authorName,
+      featuredImage,
+    },
+  });
+
+  return blog;
+};
+
 export const BlogService = {
   createBlogService,
   getAllBlogsService,
   getBlogService,
+  updateBlogService,
 };

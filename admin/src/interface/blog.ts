@@ -1,6 +1,10 @@
 import { BlogStatus } from "../constants/blog.constant";
 
 export type BlogStatus = (typeof BlogStatus)[number];
+export interface ITag {
+  name: string;
+  slug: string;
+}
 
 // Define our blog types
 export interface Blog {
@@ -10,7 +14,7 @@ export interface Blog {
   slug: string;
   authorName: string;
   subTitle: string;
-  tags: string;
+  tags: ITag[] | string;
   featuredImage: File;
   createdAt: string;
   updatedAt: string;

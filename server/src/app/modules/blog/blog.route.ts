@@ -19,4 +19,12 @@ router.get("/", BlogController.getAllBlogs);
 
 router.get("/:slug", BlogController.getBlog);
 
+router.put(
+  "/:slug",
+  authenticateJWT,
+  imageUpload.single("featuredImage"),
+  validateRequest(BlogValidation.updateBlogSchema),
+  BlogController.updateBlog
+);
+
 export const BlogRoutes = router;

@@ -51,8 +51,8 @@ export const blogApiSlice = baseApi.injectEndpoints({
 
           if (key === "tags") {
             // Handle tags array
-            formData.append(key, JSON.stringify(value));
-            console.log(`Appended tags: ${JSON.stringify(value)}`);
+            formData.append(key, value as string);
+            console.log(`Appended tags: ${value}`);
           } else if (key === "featuredImage" && typeof value === "object") {
             // Handle file upload
             formData.append(key, value);

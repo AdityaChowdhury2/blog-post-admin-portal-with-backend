@@ -16,8 +16,9 @@ const updateBlogSchema = z.object({
   body: z.object({
     title: z.string().min(1, "Title is required"),
     status: z.enum(Object.values(BlogStatus) as [string, ...string[]]),
-    subtitle: z.string().optional(),
+    subtitle: z.string(),
     content: z.string().min(1, "Content is required"),
+    featuredImage: z.string().optional(),
   }),
 });
 

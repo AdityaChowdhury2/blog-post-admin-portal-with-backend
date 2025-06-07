@@ -66,8 +66,22 @@ const getAllBlogs: RequestHandler = catchAsync(async (req, res) => {
   });
 });
 
+const updateBlog: RequestHandler = catchAsync(async (req, res) => {
+  const blogSlug = req.params.slug;
+
+  const result = await BlogService.updateBlogService(blogSlug, req.body);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Blog updated successfully",
+    data: result,
+  });
+});
+
 export const BlogController = {
   createBlog,
   getBlog,
   getAllBlogs,
+  updateBlog,
 };

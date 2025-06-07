@@ -30,7 +30,7 @@ model RefreshToken {
 model Blog {
   id            Int        @id @default(autoincrement())
   title         String
-  subtitle      String?
+  subTitle      String?
   slug          String     @unique
   content       String     @db.Text
   status        BlogStatus @default(DRAFT)

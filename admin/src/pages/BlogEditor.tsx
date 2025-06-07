@@ -20,6 +20,7 @@ import {
 } from "../redux/api/blogApiSlice";
 import { Helmet } from "react-helmet-async";
 import slugify from "slugify";
+import type { ITag } from "../interface/blog";
 
 // Import your custom components as needed
 // import  Button, Label, Input, Card, CardHeader, CardTitle, CardContent, Textarea, Select, SelectTrigger, SelectValue, SelectContent, SelectItem
@@ -33,7 +34,7 @@ interface BlogFormData {
   author: string;
   subTitle: string;
   tags: string;
-  featuredImage: File;
+  featuredImage: File | string;
 }
 interface Response<T> {
   success: boolean;
@@ -69,6 +70,8 @@ const BlogPostEditor = () => {
     }
   );
 
+  console.log("existingPost", existingPost?.data);
+
   // React Hook Form setup
   const {
     control,
@@ -91,14 +94,25 @@ const BlogPostEditor = () => {
   // If we're editing, fetch the post data
   useEffect(() => {
     if (isEdit && existingPost) {
-      // reset({
-      //   title: existingPost.title,
-      //   content: existingPost.content,
-      //   author: existingPost.author,
-      //   subTitle: existingPost.subTitle,
-      //   tags: existingPost.tags,
-      //   featuredImage: null // You'd set this from your API response
-      // });
+      reset({
+        title: existingPost.data?.title,
+        content: existingPost.data?.content,
+        author: existingPost.data?.authorName,
+        subTitle: existingPost.data?.subTitle,
+        tags: (existingPost.data?.tags as ITag[])
+          ?.map((tag) => tag.name)
+          .join(", "),
+        featuredImage: existingPost.data?.featuredImage,
+      });
+    } else {
+      reset({
+        title: "",
+        content: "",
+        author: "",
+        subTitle: "",
+        tags: "",
+        featuredImage: undefined,
+      });
     }
   }, [isEdit, existingPost, reset]);
 
@@ -151,7 +165,7 @@ const BlogPostEditor = () => {
           content: data.content,
           subTitle: data.subTitle,
           tags: data.tags,
-          featuredImage: data.featuredImage,
+          featuredImage: data.featuredImage as File,
           slug,
           authorName: data.author,
           status: status,
@@ -164,7 +178,7 @@ const BlogPostEditor = () => {
           content: data.content,
           subTitle: data.subTitle,
           tags: data.tags,
-          featuredImage: data.featuredImage,
+          featuredImage: data.featuredImage as File,
           slug,
           authorName: data.author,
           status: status,
