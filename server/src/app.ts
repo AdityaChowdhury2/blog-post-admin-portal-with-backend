@@ -7,17 +7,22 @@ import router from "./app/routes";
 import fs from "fs";
 import swaggerUi from "swagger-ui-express";
 import * as swaggerDocument from "../swagger.json";
+import cookieParser from "cookie-parser";
 
 const app: Application = express();
 
 app.use(
   cors({
-    origin: "*", // ✅ specify exact frontend origin
+    origin:
+      process.env.NODE_ENV === "production"
+        ? "https://book-catalog-frontend.vercel.app"
+        : "http://localhost:5173", // ✅ specify exact frontend origin
     credentials: true,
   })
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 

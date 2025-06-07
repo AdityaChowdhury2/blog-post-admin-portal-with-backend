@@ -16,14 +16,13 @@ import logo from "../assets/images/logo-dark.png";
 import logoSm from "../assets/images/logo-sm.png";
 import avatar4 from "../assets/images/users/avatar-4.jpg";
 import { Button } from "../components/ui/button";
-import { useAppDispatch } from "../redux/hooks";
-import { logout } from "../redux/features/authSlice";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../components/ui/dropdown-menu";
+import { useLogoutMutation } from "../redux/api/authApiSlice";
 
 const navMenu = [
   { icon: <LuBook className="size-5" />, text: "Dashboard", href: "/" },
@@ -50,11 +49,11 @@ function Sidebar({
   toggleMinimized: () => void;
   toggleSidebar: () => void;
 }) {
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const [logout] = useLogoutMutation();
 
   const handleLogout = () => {
-    dispatch(logout());
+    logout();
     navigate("/login");
   };
 

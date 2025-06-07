@@ -24,7 +24,8 @@ interface AuthState {
 // Initial state
 const initialState: AuthState = {
   user: getLocalStorage("user"),
-  isAuthenticated: false,
+  isAuthenticated:
+    getLocalStorage("user") && getLocalStorage("token") ? true : false,
   isLoading: false,
   error: null,
   token: getLocalStorage("token"),
@@ -38,7 +39,9 @@ const authSlice = createSlice({
     logout: (state) => {
       state.isAuthenticated = false;
       state.token = null;
+      state.user = null;
       removeLocalStorage("token");
+      removeLocalStorage("user");
     },
     clearError: (state) => {
       state.error = null;

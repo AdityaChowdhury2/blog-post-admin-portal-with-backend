@@ -12,13 +12,6 @@ const login: RequestHandler = catchAsync(
     const loginPayload = req.body as IAuthLoginPayload;
     const result = await AuthService.loginService(loginPayload);
 
-    res.cookie("refreshToken", result.refreshToken, {
-      httpOnly: true,
-      sameSite: "strict",
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 1000 * 60 * 60 * 24 * 7,
-    });
-
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
@@ -32,6 +25,18 @@ const login: RequestHandler = catchAsync(
           name: result.name,
         },
       },
+      cookies: [
+        {
+          name: "refreshToken",
+          value: result.refreshToken,
+          options: {
+            httpOnly: process.env.NODE_ENV === "production",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+            secure: process.env.NODE_ENV === "production",
+            maxAge: 1000 * 60 * 60 * 24 * 7,
+          },
+        },
+      ],
     });
   }
 );
@@ -48,7 +53,27 @@ const register: RequestHandler = catchAsync(async (req, res) => {
   });
 });
 
+const logout: RequestHandler = catchAsync(async (req, res) => {
+  const refreshToken = req?.cookies?.refreshToken;
+  console.log("refreshToken ====>", refreshToken);
+  console.log("req.cookies ====>", req.cookies);
+  await AuthService.logoutService(refreshToken);
+  res.clearCookie("refreshToken", {
+    httpOnly: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+    secure: process.env.NODE_ENV === "production",
+    maxAge: 0,
+    path: "/",
+  });
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Logout successful",
+  });
+});
+
 export const AuthController = {
   login,
   register,
+  logout,
 };

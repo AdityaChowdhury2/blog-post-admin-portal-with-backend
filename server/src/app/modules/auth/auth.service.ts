@@ -73,7 +73,18 @@ const register = async (payload: IAuthRegisterPayload) => {
   return { id: user.id, email: user.email, role: user.role };
 };
 
+const logout = async (refreshToken: string) => {
+  if (!refreshToken) {
+    throw new AppError(httpStatus.UNAUTHORIZED, "Refresh token not found");
+  }
+
+  await prisma.refreshToken.delete({
+    where: { token: refreshToken },
+  });
+};
+
 export const AuthService = {
   loginService: login,
   registerService: register,
+  logoutService: logout,
 };

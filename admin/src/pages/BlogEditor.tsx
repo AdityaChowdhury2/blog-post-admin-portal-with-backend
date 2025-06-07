@@ -18,6 +18,7 @@ import {
   useCreateBlogMutation,
   useUpdateBlogMutation,
 } from "../redux/api/blogApiSlice";
+import { Helmet } from "react-helmet-async";
 
 // Import your custom components as needed
 // import  Button, Label, Input, Card, CardHeader, CardTitle, CardContent, Textarea, Select, SelectTrigger, SelectValue, SelectContent, SelectItem
@@ -186,6 +187,9 @@ const BlogPostEditor = () => {
 
   return (
     <>
+      <Helmet>
+        <title>Blog Editor | MISCOM</title>
+      </Helmet>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>

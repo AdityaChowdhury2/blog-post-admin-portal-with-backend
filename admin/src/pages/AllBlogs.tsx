@@ -35,6 +35,7 @@ import {
   useGetBlogsQuery,
   useDeleteBlogMutation,
 } from "../redux/api/blogApiSlice";
+import { Helmet } from "react-helmet-async";
 
 const BlogsPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -79,6 +80,9 @@ const BlogsPage: React.FC = () => {
 
   return (
     <>
+      <Helmet>
+        <title>All Blogs | MISCOM</title>
+      </Helmet>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>

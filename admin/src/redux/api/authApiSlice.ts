@@ -11,7 +11,7 @@ const authApiSlice = baseApi.injectEndpoints({
         data: credentials,
         useAuth: false, // Optional: normally it's false for public routes
       }),
-      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
         try {
           // console.log("queryFulfilled", queryFulfilled);
           const { data } = await queryFulfilled;
@@ -34,7 +34,25 @@ const authApiSlice = baseApi.injectEndpoints({
         data: credentials,
       }),
     }),
+    logout: builder.mutation<void, void>({
+      query: () => ({
+        url: "/auth/logout",
+        method: "DELETE",
+      }),
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          dispatch(logout());
+        } catch (error: unknown) {
+          console.log("error", error);
+          if (error instanceof AxiosError && error.response?.status === 401) {
+            dispatch(logout());
+          }
+        }
+      },
+    }),
   }),
 });
 
-export const { useLoginMutation, useRegisterMutation } = authApiSlice;
+export const { useLoginMutation, useRegisterMutation, useLogoutMutation } =
+  authApiSlice;

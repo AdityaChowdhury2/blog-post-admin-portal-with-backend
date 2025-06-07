@@ -3,10 +3,12 @@ import axios, {
   type AxiosResponse,
   type InternalAxiosRequestConfig,
 } from "axios";
+import { removeLocalStorage } from "./localStorage";
 
 // Create public axios instance
 export const axiosPublic = axios.create({
   baseURL: import.meta.env.VITE_SERVER_URL || "http://localhost:8000/api/v1",
+  withCredentials: true,
 });
 
 // Create authenticated axios instance
@@ -35,7 +37,8 @@ axiosInstance.interceptors.response.use(
   (error: AxiosError) => {
     if (error.response?.status === 401) {
       // Optional: clear localStorage
-      localStorage.removeItem("token");
+      removeLocalStorage("token");
+      removeLocalStorage("user");
 
       // Optional: notify app (e.g., redirect, reload)
       console.warn("Unauthorized, please log in again.");
