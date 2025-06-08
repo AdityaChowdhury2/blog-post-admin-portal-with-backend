@@ -33,7 +33,7 @@ const navMenu = [
   },
   {
     icon: <LuPencil className="size-5" />,
-    text: "Add Blog",
+    text: "Blog Editor",
     href: "/add-blog",
   },
 ];

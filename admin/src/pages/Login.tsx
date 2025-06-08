@@ -9,6 +9,7 @@ import { Input } from "../components/ui/input";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Helmet } from "react-helmet-async";
+import type { ErrorResponse } from "../interface/error";
 
 // Define form data type
 interface FormData {
@@ -61,10 +62,11 @@ export default function Login() {
       });
       // console.log("response in login page", response);
 
-      if (response.data.success) {
+      if (response?.data?.success) {
         toast.success("Login successful");
       } else {
-        toast.error("Login failed");
+        console.log("response in login page", response);
+        toast.error((response as ErrorResponse).error.data.message);
       }
 
       // No need to navigate here as the auth slice will update isAuthenticated
@@ -72,8 +74,8 @@ export default function Login() {
     } catch (err) {
       // Error handling is now done in the auth slice
       console.error("Login error:", err);
-      toast.error("Login failed");
-      dispatch(setError("Login failed"));
+      toast.error((err as ErrorResponse).error.data.message);
+      dispatch(setError((err as ErrorResponse).error.data.message));
     }
   };
 

@@ -1,10 +1,13 @@
+import httpStatus from "http-status";
 import prisma from "../../config/prisma";
 import slugify from "slugify";
 
 import viewCache from "../../utils/viewCache";
 import { ICreateBlog } from "./blog.interface";
+import { UserRole } from "@prisma/client";
+import AppError from "../../errors/AppError";
 
-const createBlogService = async (payload: ICreateBlog) => {
+const createBlogService = async (payload: ICreateBlog, user: any) => {
   const {
     title,
     subTitle,
@@ -15,6 +18,27 @@ const createBlogService = async (payload: ICreateBlog) => {
     slug,
     featuredImage,
   } = payload;
+
+  const userData = await prisma.user.findUnique({
+    where: { id: +user.userId },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+    },
+  });
+
+  if (!userData) {
+    throw new AppError(httpStatus.UNAUTHORIZED, "User not exists");
+  }
+
+  if (userData.role !== UserRole.ADMIN) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      "You are not authorized to create a blog"
+    );
+  }
 
   let tagsArray: (string | null)[] = [];
   if (tags) {
@@ -142,9 +166,18 @@ const updateBlogService = async (blogSlug: string, payload: ICreateBlog) => {
   return blog;
 };
 
+const deleteBlogService = async (blogSlug: string) => {
+  const blog = await prisma.blog.delete({
+    where: { slug: blogSlug },
+  });
+
+  return blog;
+};
+
 export const BlogService = {
   createBlogService,
   getAllBlogsService,
   getBlogService,
+  deleteBlogService,
   updateBlogService,
 };

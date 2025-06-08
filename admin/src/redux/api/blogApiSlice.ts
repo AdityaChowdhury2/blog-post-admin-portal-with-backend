@@ -16,6 +16,7 @@ export const blogApiSlice = baseApi.injectEndpoints({
         method: "GET",
         useAuth: false, // 👈 public access
       }),
+      providesTags: ["Blogs"],
     }),
     getBlog: builder.query<GetSingleBlogResponse, string>({
       query: (slug) => ({
@@ -23,6 +24,7 @@ export const blogApiSlice = baseApi.injectEndpoints({
         method: "GET",
         useAuth: false, // 👈 public access
       }),
+      providesTags: ["Blog"],
     }),
 
     // AUTHENTICATED
@@ -82,6 +84,7 @@ export const blogApiSlice = baseApi.injectEndpoints({
           useAuth: true, // 🔐 needs auth
         };
       },
+      invalidatesTags: ["Blogs"],
     }),
     updateBlog: builder.mutation<GetSingleBlogResponse, UpdateBlogRequest>({
       query: ({ slug, ...blog }) => {
@@ -138,6 +141,7 @@ export const blogApiSlice = baseApi.injectEndpoints({
           useAuth: true, // 🔐 needs auth
         };
       },
+      invalidatesTags: ["Blog"],
     }),
     deleteBlog: builder.mutation<GetSingleBlogResponse, string>({
       query: (slug) => ({
@@ -145,6 +149,7 @@ export const blogApiSlice = baseApi.injectEndpoints({
         method: "DELETE",
         useAuth: true, // 🔐 needs auth
       }),
+      invalidatesTags: ["Blogs"],
     }),
   }),
 });

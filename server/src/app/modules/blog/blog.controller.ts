@@ -10,6 +10,9 @@ const createBlog: RequestHandler = catchAsync(
   async (req: Request, res: Response) => {
     console.log("req.body", req.body);
     console.log("req.file", req.file);
+    console.log("req.user ====>", (req as any).user);
+
+    const user = (req as any).user;
 
     const tempFileName = req.file?.filename as string;
     const ext = path.extname(tempFileName || "");
@@ -24,7 +27,7 @@ const createBlog: RequestHandler = catchAsync(
 
     req.body.featuredImage = "/uploads/" + newFileName;
 
-    const result = await BlogService.createBlogService(req.body);
+    const result = await BlogService.createBlogService(req.body, user);
     sendResponse(res, {
       statusCode: httpStatus.CREATED,
       success: true,
@@ -79,9 +82,23 @@ const updateBlog: RequestHandler = catchAsync(async (req, res) => {
   });
 });
 
+const deleteBlog: RequestHandler = catchAsync(async (req, res) => {
+  const blogSlug = req.params.slug;
+
+  const result = await BlogService.deleteBlogService(blogSlug);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Blog deleted successfully",
+    data: result,
+  });
+});
+
 export const BlogController = {
   createBlog,
   getBlog,
   getAllBlogs,
   updateBlog,
+  deleteBlog,
 };

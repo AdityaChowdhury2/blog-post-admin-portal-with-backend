@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { cn } from "../../lib/utils";
 import { Button } from "./button";
 import { LuImage, LuUpload, LuTrash2, LuLoaderCircle } from "react-icons/lu";
@@ -7,6 +7,7 @@ interface FileUploadProps {
   className?: string;
   onChange?: (file: File | null) => void;
   onPreviewChange?: (preview: string | null) => void;
+  imageUrl?: string;
 }
 
 const MAX_FILE_SIZE = 1024 * 1024; // 1MB in bytes
@@ -16,12 +17,19 @@ export function FileUpload({
   className,
   onChange,
   onPreviewChange,
+  imageUrl,
   ...props
 }: FileUploadProps) {
   const [isDragActive, setIsDragActive] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (imageUrl) {
+      setPreview(imageUrl);
+    }
+  }, [imageUrl]);
 
   const validateFile = (file: File): string | null => {
     if (!file) return null;
@@ -53,7 +61,7 @@ export function FileUpload({
     reader.readAsDataURL(file);
   };
 
-  const handleChange = (file: File | null) => {
+  const handleChange = (file: File | string | null) => {
     setError(null);
 
     if (!file) {
@@ -62,15 +70,15 @@ export function FileUpload({
       return;
     }
 
-    const validationError = validateFile(file);
+    const validationError = validateFile(file as File);
     if (validationError) {
       setError(validationError);
       if (inputRef.current) inputRef.current.value = "";
       return;
     }
 
-    if (onChange) onChange(file);
-    handlePreview(file);
+    if (onChange) onChange(file as File);
+    handlePreview(file as File);
   };
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
@@ -103,6 +111,7 @@ export function FileUpload({
   };
 
   const removeFile = () => {
+    console.log("removeFile");
     handleChange(null);
     if (inputRef.current) inputRef.current.value = "";
   };

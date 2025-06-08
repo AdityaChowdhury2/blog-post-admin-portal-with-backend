@@ -16,7 +16,7 @@ const login = async (payload: IAuthLoginPayload) => {
     where: { email: payload.email },
   });
   if (!user) {
-    throw new AppError(httpStatus.NOT_FOUND, "User not found");
+    throw new AppError(httpStatus.NOT_FOUND, "User not exists");
   }
 
   if (!(await comparePassword(payload.password, user.password))) {
@@ -103,7 +103,7 @@ const refreshToken = async (refreshToken: string) => {
       where: { id: Number(decoded.userId) },
     });
     if (!user) {
-      throw new AppError(httpStatus.UNAUTHORIZED, "User not found");
+      throw new AppError(httpStatus.UNAUTHORIZED, "User not exists");
     }
 
     const accessToken = JwtUtils.generateAccessToken({

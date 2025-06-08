@@ -21,6 +21,8 @@ import {
 import { Helmet } from "react-helmet-async";
 import slugify from "slugify";
 import type { ITag } from "../interface/blog";
+import { useLogoutMutation } from "../redux/api/authApiSlice";
+import type { ErrorResponse } from "../interface/error";
 
 // Import your custom components as needed
 // import  Button, Label, Input, Card, CardHeader, CardTitle, CardContent, Textarea, Select, SelectTrigger, SelectValue, SelectContent, SelectItem
@@ -36,15 +38,7 @@ interface BlogFormData {
   tags: string;
   featuredImage: File | string;
 }
-interface Response<T> {
-  success: boolean;
-  message: string;
-  data: T;
-  errorSources?: {
-    [key: string]: string;
-  };
-  stack?: string;
-}
+
 
 // Mock category data
 // const categories = [
@@ -63,6 +57,7 @@ const BlogPostEditor = () => {
   // RTK Query hooks
   const [createBlogPost] = useCreateBlogMutation();
   const [updateBlogPost] = useUpdateBlogMutation();
+  const [logout] = useLogoutMutation();
   const { data: existingPost, isLoading: isLoadingPost } = useGetBlogQuery(
     slug || "",
     {
@@ -70,14 +65,13 @@ const BlogPostEditor = () => {
     }
   );
 
-  console.log("existingPost", existingPost?.data);
-
   // React Hook Form setup
   const {
     control,
     register,
     handleSubmit,
     setValue,
+    getValues,
     formState: { errors },
     reset,
   } = useForm<BlogFormData>({
@@ -102,7 +96,7 @@ const BlogPostEditor = () => {
         tags: (existingPost.data?.tags as ITag[])
           ?.map((tag) => tag.name)
           .join(", "),
-        featuredImage: existingPost.data?.featuredImage,
+        featuredImage: `${import.meta.env.VITE_API_URL}${existingPost.data?.featuredImage}`,
       });
     } else {
       reset({
@@ -114,6 +108,8 @@ const BlogPostEditor = () => {
         featuredImage: undefined,
       });
     }
+
+    console.log("existingPost", existingPost?.data?.featuredImage);
   }, [isEdit, existingPost, reset]);
 
   // Handle image upload preview
@@ -165,7 +161,7 @@ const BlogPostEditor = () => {
           content: data.content,
           subTitle: data.subTitle,
           tags: data.tags,
-          featuredImage: data.featuredImage as File,
+          featuredImage: data.featuredImage as unknown as File,
           slug,
           authorName: data.author,
           status: status,
@@ -188,14 +184,15 @@ const BlogPostEditor = () => {
 
       // Navigate back to posts list
       navigate("/blogs");
-    } catch (error: unknown | { status?: number; data?: Response<unknown> }) {
+    } catch (error: unknown | ErrorResponse) {
+      if (
+        (error as ErrorResponse)?.error?.data?.message === "User not exists"
+      ) {
+        logout();
+        navigate("/login");
+      }
       console.error("Error saving blog post:", error);
-      toast.error(
-        (error as { status?: number; data?: Response<unknown> }).data?.message
-          ? (error as { status?: number; data?: Response<unknown> }).data
-              ?.message
-          : "Failed to save blog post. Please try again."
-      );
+      toast.error((error as ErrorResponse).error.data.message);
     } finally {
       setIsSubmitting(false);
     }
@@ -398,6 +395,7 @@ const BlogPostEditor = () => {
                   <FileUpload
                     onChange={handleImageUpload}
                     onPreviewChange={handleImagePreviewChange}
+                    imageUrl={getValues("featuredImage") as string | undefined}
                   />
                   {errors.featuredImage && (
                     <p className="text-sm text-red-500">

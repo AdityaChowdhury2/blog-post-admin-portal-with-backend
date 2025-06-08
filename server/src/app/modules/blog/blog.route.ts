@@ -27,4 +27,6 @@ router.put(
   BlogController.updateBlog
 );
 
+router.delete("/:slug", authenticateJWT, BlogController.deleteBlog);
+
 export const BlogRoutes = router;
